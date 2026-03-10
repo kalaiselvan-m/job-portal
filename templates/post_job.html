@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ================= HEADER ================= -->
+
+<div class="post-header text-center mb-4">
+
+<h2 class="fw-bold text-white">
+<i class="bi bi-plus-circle"></i> Post a New Job
+</h2>
+
+<p class="text-light">
+Create a job listing and let ATS find the best candidates
+</p>
+
+</div>
+
+
+<!-- ================= FORM CARD ================= -->
+
+<div class="card post-job-card shadow-lg p-4">
+
+<form method="POST">
+
+{% csrf_token %}
+
+<!-- JOB TITLE -->
+
+<div class="mb-3">
+
+<label class="form-label fw-bold">
+<i class="bi bi-briefcase"></i> Job Title
+</label>
+
+{{ form.title }}
+
+</div>
+
+
+<!-- DESCRIPTION -->
+
+<div class="mb-3">
+
+<label class="form-label fw-bold">
+<i class="bi bi-file-text"></i> Job Description
+</label>
+
+{{ form.description }}
+
+</div>
+
+
+<!-- SKILLS -->
+
+<div class="mb-3">
+
+<label class="form-label fw-bold">
+<i class="bi bi-tools"></i> Required Skills
+</label>
+
+{{ form.skills_required }}
+
+<small class="text-muted">
+Example: Python:3, Django:2, SQL:1
+</small>
+
+</div>
+
+
+<!-- LOCATION -->
+
+<div class="mb-3">
+
+<label class="form-label fw-bold">
+<i class="bi bi-geo-alt"></i> Location
+</label>
+
+{{ form.location }}
+
+</div>
+
+
+<!-- ATS SCORE -->
+
+<div class="mb-4">
+
+<label class="form-label fw-bold">
+<i class="bi bi-bar-chart"></i> Minimum ATS Score
+</label>
+
+{{ form.minimum_ats_score }}
+
+</div>
+
+
+<!-- BUTTON -->
+
+<button class="btn btn-post-job w-100">
+
+<i class="bi bi-send"></i>
+Post Job
+
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}

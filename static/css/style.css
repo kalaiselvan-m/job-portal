@@ -1,0 +1,610 @@
+/* =================================
+   GLOBAL STYLES
+================================= */
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#4e73df,#6f42c1);
+background-attachment:fixed;
+color:#fff;
+transition:all .3s ease-in-out;
+}
+
+
+/* =================================
+   NAVBAR
+================================= */
+
+.navbar{
+background:linear-gradient(90deg,#1f1f2e,#2d2d44);
+padding:12px 20px;
+}
+
+.navbar-brand{
+font-weight:bold;
+font-size:20px;
+letter-spacing:1px;
+}
+
+.navbar-nav .nav-link{
+position:relative;
+transition:color .3s;
+}
+
+.navbar-nav .nav-link::after{
+content:'';
+position:absolute;
+width:0%;
+height:2px;
+left:0;
+bottom:0;
+background:#fff;
+transition:.3s;
+}
+
+.navbar-nav .nav-link:hover::after{
+width:100%;
+}
+
+
+/* =================================
+   CARDS
+================================= */
+
+.card{
+border-radius:20px;
+border:none;
+background:rgba(255,255,255,.95);
+backdrop-filter:blur(10px);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 40px rgba(0,0,0,.2);
+}
+
+
+/* =================================
+   BUTTONS
+================================= */
+
+.btn{
+border-radius:30px;
+padding:8px 20px;
+font-weight:500;
+transition:.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+opacity:.9;
+}
+
+.btn-primary{
+background:linear-gradient(45deg,#4e73df,#224abe);
+border:none;
+}
+
+.btn-success{
+background:linear-gradient(45deg,#1cc88a,#13855c);
+border:none;
+}
+
+.btn-warning{
+background:linear-gradient(45deg,#f6c23e,#dda20a);
+border:none;
+}
+
+
+/* =================================
+   FORM INPUTS
+================================= */
+
+.form-control{
+border-radius:12px;
+padding:10px;
+transition:.3s;
+}
+
+.form-control:focus{
+box-shadow:0 0 10px rgba(78,115,223,.4);
+border-color:#4e73df;
+}
+
+
+/* =================================
+   BADGES
+================================= */
+
+.badge{
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+display:inline-block;
+word-break:break-word;
+}
+
+
+/* =================================
+   TABLE
+================================= */
+
+.table{
+border-radius:15px;
+overflow:hidden;
+background:#fff;
+}
+
+.table th{
+background:linear-gradient(90deg,#343a40,#212529);
+color:#fff;
+}
+
+.table tbody tr:hover{
+background:#f1f3f9;
+}
+
+
+/* =================================
+   PROGRESS BAR
+================================= */
+
+.progress{
+height:20px;
+border-radius:15px;
+background:#e9ecef;
+}
+
+.progress-bar{
+font-size:12px;
+animation:fillBar 1.2s ease;
+}
+
+@keyframes fillBar{
+from{width:0}
+}
+
+
+/* =================================
+   ANIMATIONS
+================================= */
+
+.fade-in{
+animation:fadeIn .8s ease-in-out;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(15px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes fadeDown{
+from{opacity:0;transform:translateY(-20px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+
+/* =================================
+   LOGIN PAGE
+================================= */
+
+.login-bg{
+position:relative;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#4f46e5,#9333ea);
+}
+
+.login-card{
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(20px);
+border-radius:20px;
+padding:45px;
+width:380px;
+color:#fff;
+box-shadow:0 25px 60px rgba(0,0,0,.35);
+animation:floatCard 6s ease-in-out infinite;
+}
+
+@keyframes floatCard{
+0%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
+100%{transform:translateY(0)}
+}
+
+
+/* =================================
+   HOME PAGE
+================================= */
+
+.home-header{
+background:linear-gradient(90deg,#6366f1,#9333ea);
+padding:30px;
+border-radius:12px;
+animation:fadeDown .6s ease;
+}
+
+.job-card{
+background:#fff;
+border-radius:16px;
+padding:15px;
+box-shadow:0 10px 25px rgba(0,0,0,.1);
+transition:.3s;
+}
+
+.job-card:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 45px rgba(0,0,0,.2);
+}
+
+.company-badge{
+background:#eef2ff;
+padding:5px 10px;
+border-radius:20px;
+font-size:14px;
+color:#4338ca;
+display:inline-block;
+}
+
+.location-badge{
+background:#ecfeff;
+padding:5px 10px;
+border-radius:20px;
+font-size:14px;
+color:#0e7490;
+display:inline-block;
+}
+
+.btn-apply{
+background:linear-gradient(90deg,#22c55e,#4ade80);
+color:#fff;
+border-radius:20px;
+font-weight:bold;
+}
+
+
+/* =================================
+   DASHBOARDS
+================================= */
+
+.dashboard-header{
+background:linear-gradient(90deg,#6366f1,#9333ea);
+padding:20px;
+border-radius:12px;
+animation:fadeDown .6s ease;
+}
+
+.dashboard-card{
+background:#fff;
+border-radius:16px;
+padding:25px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,.1);
+transition:.3s;
+}
+
+.dashboard-card:hover{
+transform:translateY(-6px);
+box-shadow:0 20px 45px rgba(0,0,0,.2);
+}
+
+.dashboard-icon{
+font-size:35px;
+color:#6366f1;
+margin-bottom:10px;
+}
+
+
+/* =================================
+   PROFILE PAGE
+================================= */
+
+.profile-header{
+background:linear-gradient(90deg,#6366f1,#9333ea);
+padding:20px;
+border-radius:12px;
+animation:fadeDown .6s ease;
+}
+
+.profile-card{
+border-radius:16px;
+transition:.3s;
+}
+
+.profile-card:hover{
+transform:translateY(-5px);
+box-shadow:0 20px 45px rgba(0,0,0,.2);
+}
+
+.skill-match{
+background:#22c55e;
+margin:3px;
+}
+
+.skill-missing{
+background:#ef4444;
+margin:3px;
+}
+
+/* =================================
+PROFILE PAGE ADVANCED UI
+================================= */
+
+.profile-page{
+animation:fadeUp 0.6s ease;
+}
+
+.profile-header{
+background:linear-gradient(90deg,#6366f1,#9333ea);
+padding:20px;
+border-radius:12px;
+animation:fadeDown 0.6s ease;
+}
+
+.profile-card{
+border-radius:18px;
+transition:0.3s;
+background:white;
+}
+
+.profile-card:hover{
+transform:translateY(-6px);
+box-shadow:0 25px 50px rgba(0,0,0,0.2);
+}
+
+.profile-input{
+border-radius:10px;
+transition:0.3s;
+}
+
+.profile-input:focus{
+box-shadow:0 0 12px rgba(99,102,241,0.4);
+border-color:#6366f1;
+}
+
+.verify-btn{
+transition:0.3s;
+}
+
+.verify-btn:hover{
+transform:scale(1.05);
+}
+
+.update-btn{
+background:linear-gradient(90deg,#22c55e,#4ade80);
+border:none;
+font-weight:bold;
+border-radius:25px;
+}
+
+.update-btn:hover{
+transform:scale(1.05);
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* OTP BOX */
+
+.otp-box{
+display:none;
+}
+
+/* ATS SECTION */
+
+.ats-chart-box{
+width:220px;
+height:220px;
+margin:auto;
+animation:fadeUp 0.6s ease;
+}
+
+.ats-score{
+font-size:22px;
+font-weight:bold;
+color:#16a34a;
+margin-top:10px;
+}
+
+/* SKILLS */
+
+.skill-container{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+}
+
+.skill-match{
+background:#22c55e;
+transition:0.3s;
+}
+
+.skill-match:hover{
+transform:scale(1.1);
+}
+
+.skill-missing{
+background:#ef4444;
+transition:0.3s;
+}
+
+.skill-missing:hover{
+transform:scale(1.1);
+}
+
+/* SLIDE ANIMATION */
+
+@keyframes slideDown{
+from{
+opacity:0;
+transform:translateY(-10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+/* ATS SCORE STYLE */
+
+.ats-chart-box{
+width:220px;
+height:220px;
+margin:auto;
+position:relative;
+animation:fadeUp 0.8s ease;
+}
+
+.ats-score{
+font-size:26px;
+font-weight:bold;
+margin-top:10px;
+animation:fadeUp 1s ease;
+}
+
+/* HERO SECTION */
+
+.hero-section{
+position:relative;
+height:85vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#4f46e5,#9333ea);
+overflow:hidden;
+}
+
+#particles-js{
+position:absolute;
+width:100%;
+height:100%;
+top:0;
+left:0;
+z-index:0;
+}
+
+.hero-content{
+position:relative;
+z-index:2;
+animation:fadeUp 1s ease;
+}
+
+.hero-title{
+animation:float 4s ease-in-out infinite;
+}
+
+.hero-subtitle{
+opacity:0.9;
+}
+
+.hero-btn{
+transition:0.3s;
+border-radius:30px;
+padding:12px 28px;
+font-weight:600;
+}
+
+.hero-btn:hover{
+transform:scale(1.08);
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* FLOAT ANIMATION */
+
+@keyframes float{
+0%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
+100%{transform:translateY(0)}
+}
+
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.step-card{
+border:none;
+border-radius:16px;
+transition:0.3s;
+display:flex;
+flex-direction:column;
+justify-content:center;
+min-height:220px;
+}
+
+.step-card:hover{
+transform:translateY(-10px);
+box-shadow:0 15px 35px rgba(0,0,0,0.2);
+}
+
+.step-icon{
+font-size:40px;
+margin-bottom:10px;
+animation:pulse 2s infinite;
+}
+
+body{
+background:transparent;
+}
+
+.row{
+position:relative;
+z-index:2;
+width:100%;
+margin:0;
+}
+
+/* APPLICATION TIMELINE */
+
+.application-timeline{
+position:relative;
+margin-top:20px;
+padding-left:20px;
+}
+
+.application-timeline::before{
+content:"";
+position:absolute;
+left:8px;
+top:0;
+bottom:0;
+width:2px;
+background:#ddd;
+}
+
+.timeline-item{
+position:relative;
+margin-bottom:15px;
+font-size:14px;
+color:#666;
+}
+
+.timeline-item .dot{
+position:absolute;
+left:-12px;
+top:3px;
+width:12px;
+height:12px;
+border-radius:50%;
+background:#bbb;
+}
+.timeline-item.done .dot{
+background:#22c55e;
+box-shadow:0 0 10px #22c55e;
+}
+
+.timeline-item.rejected .dot{
+background:#ef4444;
+}

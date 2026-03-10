@@ -1,0 +1,533 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- CHART LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+/* ================= HEADER ================= */
+
+.dashboard-header{
+background:linear-gradient(135deg,#4f46e5,#9333ea);
+padding:30px;
+border-radius:18px;
+color:white;
+margin-bottom:40px;
+box-shadow:0 15px 40px rgba(0,0,0,0.2);
+}
+
+
+/* ================= 3D CARD ================= */
+
+.application-card{
+background:white;
+border-radius:20px;
+box-shadow:0 20px 40px rgba(0,0,0,0.12);
+transition:0.35s;
+transform-style:preserve-3d;
+}
+
+.application-card:hover{
+transform:rotateX(4deg) rotateY(-4deg) translateY(-10px);
+box-shadow:0 25px 60px rgba(0,0,0,0.2);
+}
+
+.application-card .card-body{
+padding:25px;
+}
+
+
+/* ================= ATS GAUGE ================= */
+
+.score-circle{
+width:90px;
+height:90px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+font-size:18px;
+color:#111;
+background:
+conic-gradient(
+#22c55e calc(var(--score) * 1%),
+#e5e7eb 0
+);
+}
+
+/* ================= BADGES ================= */
+
+.badge{
+font-size:13px;
+padding:6px 12px;
+border-radius:20px;
+}
+
+
+/* ================= SKILL TAG ================= */
+
+/* MISSING SKILL TAG */
+
+.skill-tag{
+display:inline-block;
+background:#ffe4e6;
+color:#b91c1c;
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+font-weight:600;
+margin:3px;
+border:1px solid #fca5a5;
+}
+
+.skill-tag{
+background:#eef2ff;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+}
+
+
+/* ================= TIMELINE ================= */
+
+.application-timeline{
+position:relative;
+margin-top:20px;
+padding-left:30px;
+}
+
+.application-timeline::before{
+content:"";
+position:absolute;
+left:9px;
+top:0;
+bottom:0;
+width:2px;
+background:#e5e7eb;
+}
+
+.timeline-item{
+position:relative;
+margin-bottom:15px;
+display:flex;
+align-items:center;
+gap:10px;
+font-size:14px;
+}
+
+.timeline-item .dot{
+position:absolute;
+left:-21px;
+width:14px;
+height:14px;
+border-radius:50%;
+background:#cbd5e1;
+}
+
+.timeline-item.done .dot{
+background:#22c55e;
+box-shadow:0 0 8px #22c55e;
+}
+
+.timeline-item.rejected .dot{
+background:#ef4444;
+box-shadow:0 0 8px #ef4444;
+}
+
+.timeline-text{
+color:#555;
+font-weight:500;
+}
+
+/* ================= SUCCESS BADGE ================= */
+
+.success-badge{
+animation:pulseBadge 1.5s infinite;
+}
+
+@keyframes pulseBadge{
+0%{transform:scale(1);}
+50%{transform:scale(1.1);}
+100%{transform:scale(1);}
+}
+
+
+/* ================= RECONSIDER BUTTON ================= */
+
+/* RECONSIDER BUTTON */
+
+.btn-reconsider{
+background:#f97316;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:25px;
+font-weight:600;
+transition:0.3s;
+}
+
+.btn-reconsider:hover{
+background:#ea580c;
+transform:scale(1.05);
+}
+
+/* ================= EMPTY STATE ================= */
+
+.empty-box{
+background:linear-gradient(135deg,#6366f1,#9333ea);
+padding:60px;
+border-radius:20px;
+color:white;
+text-align:center;
+}
+
+/* ATS CHART FIX */
+
+.ats-chart-container{
+    width:100%;
+    max-width:260px;
+    margin:auto;
+    height:220px;
+}
+
+.ats-chart-container canvas{
+    width:100% !important;
+    height:220px !important;
+}
+
+.missing-title{
+color:#dc2626;
+font-weight:700;
+font-size:16px;
+margin-bottom:8px;
+}
+
+.rejection-box{
+background:#fff1f2;
+border-left:4px solid #dc2626;
+padding:12px;
+margin-top:10px;
+border-radius:6px;
+color:#7f1d1d;
+}
+
+</style>
+
+
+<!-- ================= HEADER ================= -->
+
+<div class="dashboard-header d-flex justify-content-between align-items-center">
+
+<div>
+<h2 class="fw-bold">
+<i class="bi bi-person-workspace"></i> My Applications
+</h2>
+
+<p class="mb-0">
+Track your job applications and ATS results
+</p>
+</div>
+
+<a href="{% url 'seeker_profile' %}" class="btn btn-light">
+Edit Profile
+</a>
+
+</div>
+
+
+
+<!-- ================= APPLICATION LIST ================= -->
+
+<div class="row">
+
+{% for app in applications %}
+
+<div class="col-lg-6 mb-4">
+
+<div class="application-card">
+
+<div class="card-body">
+
+<h5 class="fw-bold mb-3">
+<i class="bi bi-briefcase"></i>
+{{ app.job.title }}
+</h5>
+
+
+<!-- ATS RADIAL SCORE -->
+
+<div class="text-center mb-3">
+
+<div class="score-circle"
+style="--score: {{ app.ats_score }};">
+
+{{ app.ats_score }}%
+
+</div>
+
+<small class="text-muted">ATS Match Score</small>
+
+</div>
+
+
+<!-- APPLICATION TIMELINE -->
+
+<div class="application-timeline">
+
+<div class="timeline-item done">
+<span class="dot"></span>
+<span class="timeline-text">Application Submitted</span>
+</div>
+
+<div class="timeline-item
+{% if app.status == "Under Review" or app.status == "Shortlisted" %}
+done
+{% endif %}">
+<span class="dot"></span>
+<span class="timeline-text">Under Review</span>
+</div>
+
+<div class="timeline-item
+{% if app.status == "Shortlisted" %}
+done
+{% endif %}">
+<span class="dot"></span>
+<span class="timeline-text">Shortlisted</span>
+</div>
+
+<div class="timeline-item
+{% if app.status == "Rejected" %}
+done rejected
+{% endif %}">
+<span class="dot"></span>
+<span class="timeline-text">Rejected</span>
+</div>
+
+</div>
+
+
+<!-- STATUS -->
+
+<div class="mb-3">
+
+{% if app.status == "Rejected" %}
+
+<span class="badge bg-danger">
+<i class="bi bi-x-circle"></i> Rejected
+</span>
+
+{% elif app.status == "Shortlisted" %}
+
+<span class="badge bg-success success-badge">
+<i class="bi bi-check-circle"></i> Shortlisted
+</span>
+
+{% elif app.status == "Under Review" %}
+
+<span class="badge bg-warning text-dark">
+<i class="bi bi-hourglass"></i> Under Review
+</span>
+
+{% else %}
+
+<span class="badge bg-primary">
+{{ app.status }}
+</span>
+
+{% endif %}
+
+</div>
+
+
+<!-- SKILL MATCH CHART -->
+
+<div class="ats-chart-container">
+<canvas id="chart{{ app.id }}"></canvas>
+</div>
+
+<!-- MISSING SKILLS -->
+
+{% if app.status == "Rejected" and app.missing_skills %}
+
+<p class="missing-title">Missing Skills</p>
+
+<div class="skill-tags">
+
+{% for skill in app.missing_skills_list %}
+
+<span class="skill-tag">{{ skill }}</span>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+<!-- TIMELINE -->
+
+<div class="timeline mt-4">
+
+<div class="timeline-step">
+Applied
+</div>
+
+<div class="timeline-step">
+ATS Screening
+</div>
+
+<div class="timeline-step">
+{{ app.status }}
+</div>
+
+</div>
+
+
+
+<!-- REJECTION REASON -->
+
+{% if app.rejection_reason %}
+
+<div class="rejection-box">
+
+<strong>Reason</strong>
+
+<p>
+{{ app.rejection_reason }}
+</p>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- RECONSIDER -->
+
+<div class="mt-3">
+
+{% if app.status == "Rejected" and not app.reconsider_requested %}
+
+<form method="POST" action="{% url 'reconsider' app.id %}">
+{% csrf_token %}
+
+<button type="submit" class="btn-reconsider">
+<i class="bi bi-arrow-repeat"></i>
+Request Reconsideration
+</button>
+
+</form>
+
+{% elif app.reconsider_requested %}
+
+<span class="badge bg-info">
+Reconsideration Requested
+</span>
+
+{% endif %}
+
+
+{% if app.is_override %}
+
+<span class="badge bg-success ms-2">
+Approved by Employer
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="col-12">
+
+<div class="empty-box">
+
+<h4>No Applications Yet</h4>
+
+<p>Start applying for jobs to see your ATS results here.</p>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+<script>
+
+/* ================= SKILL MATCH CHART ================= */
+
+{% for app in applications %}
+
+const ctx{{ app.id }} = document.getElementById("chart{{ app.id }}");
+
+if(ctx{{ app.id }}){
+
+new Chart(ctx{{ app.id }},{
+
+type:'doughnut',
+
+data:{
+labels:["Matched Skills","Missing Skills"],
+
+datasets:[{
+data:[{{ app.ats_score }}, {{ app.remaining_score }}],
+
+backgroundColor:[
+"#22c55e",
+"#ef4444"
+],
+
+borderWidth:0
+}]
+},
+
+options:{
+
+responsive:true,
+maintainAspectRatio:false,
+
+cutout:"70%",
+
+plugins:{
+legend:{
+position:'bottom',
+labels:{
+color:"#444",
+font:{
+size:13,
+weight:"bold"
+}
+}
+}
+},
+
+animation:{
+animateRotate:true,
+duration:1200
+}
+
+}
+
+});
+
+}
+
+{% endfor %}
+
+</script>
+
+{% endblock %}

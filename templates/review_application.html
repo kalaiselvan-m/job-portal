@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="card shadow-lg p-4 fade-in">
+
+            <h4 class="mb-3">Review Application</h4>
+
+            <p><strong>Applicant:</strong> {{ application.applicant.username }}</p>
+            <p><strong>Job:</strong> {{ application.job.title }}</p>
+
+            <!-- ===================== -->
+            <!-- RESUME SECTION -->
+            <!-- ===================== -->
+            {% if application.applicant.resume %}
+                <div class="mb-3">
+                    <a href="{{ application.applicant.resume.url }}"
+                       target="_blank"
+                       class="btn btn-primary me-2">
+                        View Resume
+                    </a>
+
+                    <a href="{{ application.applicant.resume.url }}"
+                       download
+                       class="btn btn-outline-secondary">
+                        Download Resume
+                    </a>
+                </div>
+            {% else %}
+                <p class="text-danger">Resume not uploaded.</p>
+            {% endif %}
+
+            <!-- ===================== -->
+            <!-- ATS SCORE -->
+            <!-- ===================== -->
+            <label class="fw-bold">ATS Score</label>
+            <div class="progress mb-3">
+                <div class="progress-bar 
+                    {% if application.ats_score >= 75 %}
+                        bg-success
+                    {% elif application.ats_score >= 50 %}
+                        bg-warning
+                    {% else %}
+                        bg-danger
+                    {% endif %}"
+                    style="width: {{ application.ats_score }}%;">
+                    {{ application.ats_score }}%
+                </div>
+            </div>
+
+            <!-- ===================== -->
+            <!-- MATCHED SKILLS -->
+            <!-- ===================== -->
+            <p><strong>Matched Skills:</strong></p>
+            <div class="mb-3 d-flex flex-wrap gap-2">
+                {% for skill in matched_list %}
+                    <span class="badge bg-success p-2">
+                        ✔ {{ skill }}
+                    </span>
+                {% empty %}
+                    <span class="text-muted">No matched skills</span>
+                {% endfor %}
+            </div>
+
+            <!-- ===================== -->
+            <!-- MISSING SKILLS -->
+            <!-- ===================== -->
+           <p><strong>Missing Skills:</strong></p>
+<div class="mb-3 d-flex flex-wrap gap-2">
+    {% for skill in missing_list %}
+        <span class="badge bg-danger p-2"
+              style="max-width: 200px; white-space: normal; word-break: break-word;">
+            {{ skill }}
+        </span>
+    {% empty %}
+        <span class="text-muted">No missing skills</span>
+    {% endfor %}
+</div>
+
+            {% if application.reconsider_requested %}
+                <div class="alert alert-warning">
+                    Candidate has requested reconsideration.
+                </div>
+            {% endif %}
+
+            {% if application.is_override %}
+                <div class="alert alert-success">
+                    Manually approved by employer.
+                </div>
+            {% endif %}
+
+            <hr>
+
+            <!-- ===================== -->
+            <!-- UPDATE FORM -->
+            <!-- ===================== -->
+            <form method="POST" id="reviewForm">
+                {% csrf_token %}
+
+                <label class="fw-bold">Status</label>
+                <select name="status" id="statusSelect" class="form-select mb-3" required>
+                    <option value="Shortlisted"
+                        {% if application.status == "Shortlisted" %}selected{% endif %}>
+                        Shortlisted
+                    </option>
+                    <option value="Rejected"
+                        {% if application.status == "Rejected" %}selected{% endif %}>
+                        Rejected
+                    </option>
+                </select>
+
+                <label class="fw-bold">
+                    Reason <span id="reasonStar" style="color:red; display:none;">*</span>
+                </label>
+
+                <textarea name="reason"
+                          id="reasonField"
+                          class="form-control mb-3"
+                          placeholder="Enter rejection reason...">{{ application.rejection_reason }}</textarea>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           name="override"
+                           id="overrideCheck">
+                    <label class="form-check-label" for="overrideCheck">
+                        Override ATS Decision
+                    </label>
+                </div>
+
+                <button class="btn btn-success w-100">
+                    Update Application
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- ===================== -->
+<!-- VALIDATION SCRIPT -->
+<!-- ===================== -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const statusSelect = document.getElementById("statusSelect");
+    const reasonField = document.getElementById("reasonField");
+    const star = document.getElementById("reasonStar");
+    const form = document.getElementById("reviewForm");
+
+    function toggleReason() {
+
+        if (statusSelect.value === "Rejected") {
+            reasonField.disabled = false;
+            reasonField.required = true;
+            star.style.display = "inline";
+        } else {
+            reasonField.disabled = true;
+            reasonField.required = false;
+            star.style.display = "none";
+            reasonField.value = "";
+        }
+    }
+
+    toggleReason();
+    statusSelect.addEventListener("change", toggleReason);
+
+    form.addEventListener("submit", function(e) {
+        if (statusSelect.value === "Rejected" && reasonField.value.trim() === "") {
+            alert("Rejection reason is mandatory.");
+            e.preventDefault();
+        }
+    });
+});
+</script>
+
+{% endblock %}

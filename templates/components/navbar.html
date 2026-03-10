@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">JobPortal</a>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+
+                {% if user.is_authenticated %}
+                    {% if user.role == 'employer' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'post_job' %}">Post Job</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'employer_dashboard' %}">Dashboard</a>
+                        </li>
+                    {% endif %}
+
+                    {% if user.role == 'seeker' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'seeker_dashboard' %}">Dashboard</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>

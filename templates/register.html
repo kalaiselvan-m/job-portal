@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<div class="register-bg">
+
+<div id="particles-js"></div>
+
+<div class="register-wrapper">
+
+<div class="register-card">
+
+<h4 class="text-center mb-4 fw-bold">Create Account</h4>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- ROLE -->
+<div class="mb-3">
+<label class="form-label">Role *</label>
+{{ form.role }}
+</div>
+
+<!-- USERNAME -->
+<div class="mb-3">
+<label class="form-label">Username *</label>
+{{ form.username }}
+<div class="text-danger small">{{ form.username.errors }}</div>
+</div>
+
+<!-- EMAIL -->
+<div class="mb-3">
+<label class="form-label">Email *</label>
+{{ form.email }}
+
+<div class="text-danger small">{{ form.email.errors }}</div>
+
+<button type="button"
+class="btn btn-sm btn-outline-light mt-2"
+onclick="sendOTP()">
+Send Verification Code
+</button>
+</div>
+
+<!-- OTP -->
+<div class="mb-3" id="otpSection" style="display:none;">
+
+<label class="form-label">Verification Code *</label>
+
+<div class="otp-box">
+<input maxlength="1" class="otp-input">
+<input maxlength="1" class="otp-input">
+<input maxlength="1" class="otp-input">
+<input maxlength="1" class="otp-input">
+<input maxlength="1" class="otp-input">
+<input maxlength="1" class="otp-input">
+</div>
+
+<button type="button"
+class="btn btn-success w-100 mt-3"
+onclick="verifyOTP()">
+Verify Code
+</button>
+
+<div id="otpMessage" class="small mt-2 text-center"></div>
+
+</div>
+
+<!-- PHONE -->
+<div class="mb-3">
+<label class="form-label">Phone</label>
+{{ form.phone }}
+</div>
+
+<!-- COMPANY -->
+<div class="mb-3" id="companyField">
+<label class="form-label">Company Name *</label>
+{{ form.company_name }}
+</div>
+
+<!-- RESUME -->
+<div class="mb-3" id="resumeField">
+<label class="form-label">Upload Resume (PDF) *</label>
+{{ form.resume }}
+</div>
+
+<!-- PASSWORD -->
+<div class="mb-3">
+
+<label class="form-label">Password *</label>
+
+<input type="password"
+name="password1"
+id="password"
+class="form-control"
+required>
+
+<div class="strength-bar mt-2">
+<div id="strengthFill"></div>
+</div>
+
+<div id="strength-message" class="small mt-1"></div>
+
+</div>
+
+<!-- CONFIRM PASSWORD -->
+<div class="mb-3">
+<label class="form-label">Confirm Password *</label>
+{{ form.password2 }}
+</div>
+
+<button type="submit"
+id="registerBtn"
+class="btn btn-light w-100 mt-3"
+disabled>
+Register
+</button>
+
+</form>
+
+</div>
+</div>
+</div>
+
+<style>
+
+/* BACKGROUND */
+
+.register-bg{
+position:relative;
+min-height:100vh;
+width:100%;
+background:linear-gradient(135deg,#4f46e5,#9333ea);
+display:flex;
+justify-content:center;
+align-items:center;
+padding:80px 20px;
+overflow:hidden;
+}
+
+
+/* PARTICLES */
+
+#particles-js{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:0;
+}
+
+
+/* WRAPPER */
+
+.register-wrapper{
+position:relative;
+z-index:2;
+width:100%;
+display:flex;
+justify-content:center;
+}
+
+
+/* REGISTER CARD */
+
+.register-card{
+position:relative;
+width:100%;
+max-width:480px;
+padding:40px;
+border-radius:20px;
+color:white;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(20px);
+box-shadow:0 20px 60px rgba(0,0,0,0.4);
+animation:floatCard 6s ease-in-out infinite;
+z-index:2;
+overflow:hidden;
+}
+
+/* GRADIENT BORDER */
+
+.register-card::before{
+content:"";
+position:absolute;
+top:-2px;
+left:-2px;
+right:-2px;
+bottom:-2px;
+background:linear-gradient(
+270deg,
+#ff00cc,
+#3333ff,
+#00ffee,
+#ff00cc
+);
+background-size:600% 600%;
+border-radius:22px;
+z-index:-1;
+animation:borderAnimation 8s linear infinite;
+}
+
+.register-card::after{
+content:"";
+position:absolute;
+inset:-4px;
+background:linear-gradient(270deg,#ff00cc,#3333ff,#00ffee,#ff00cc);
+filter:blur(20px);
+opacity:0.5;
+z-index:-2;
+animation:borderAnimation 8s linear infinite;
+border-radius:25px;
+}
+
+/* FLOATING ANIMATION */
+
+@keyframes floatCard{
+
+0%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
+100%{transform:translateY(0)}
+
+}
+
+
+/* OTP INPUT */
+
+.otp-box{
+display:flex;
+gap:10px;
+justify-content:center;
+}
+
+.otp-input{
+width:45px;
+height:50px;
+border:none;
+border-radius:10px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+background:white;
+color:black;
+}
+
+
+/* PASSWORD BAR */
+
+.strength-bar{
+height:6px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+}
+
+#strengthFill{
+height:100%;
+width:0%;
+transition:0.3s;
+background:red;
+}
+
+@keyframes borderAnimation{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
+}
+
+</style>
+
+<script>
+
+document.addEventListener("DOMContentLoaded",function(){
+
+/* ROLE TOGGLE */
+
+const roleField=document.getElementById("id_role");
+const companyField=document.getElementById("companyField");
+const resumeField=document.getElementById("resumeField");
+
+function toggleFields(){
+
+if(roleField.value==="seeker"){
+companyField.style.display="none";
+resumeField.style.display="block";
+}
+
+else{
+companyField.style.display="block";
+resumeField.style.display="none";
+}
+
+}
+
+toggleFields();
+roleField.addEventListener("change",toggleFields);
+
+
+/* PASSWORD STRENGTH */
+
+const password=document.getElementById("password");
+const fill=document.getElementById("strengthFill");
+const message=document.getElementById("strength-message");
+
+password.addEventListener("input",()=>{
+
+let val=password.value;
+
+let strength=0;
+
+if(val.length>=8) strength++;
+if(/[A-Z]/.test(val)) strength++;
+if(/[0-9]/.test(val)) strength++;
+if(/[^A-Za-z0-9]/.test(val)) strength++;
+
+fill.style.width=(strength*25)+"%";
+
+if(strength<=1){
+fill.style.background="red";
+message.innerHTML="Weak password";
+}
+
+else if(strength<=3){
+fill.style.background="orange";
+message.innerHTML="Medium password";
+}
+
+else{
+fill.style.background="green";
+message.innerHTML="Strong password";
+}
+
+});
+
+
+/* OTP AUTO INPUT */
+
+document.querySelectorAll(".otp-input").forEach((input,index)=>{
+
+input.addEventListener("keyup",(e)=>{
+
+if(e.target.value && index<5){
+document.querySelectorAll(".otp-input")[index+1].focus();
+}
+
+});
+
+});
+
+});
+
+
+/* OTP SYSTEM */
+
+const emailInput=document.getElementById("id_email");
+const otpSection=document.getElementById("otpSection");
+const otpMessage=document.getElementById("otpMessage");
+const registerBtn=document.getElementById("registerBtn");
+
+function getCSRFToken(){
+return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function sendOTP(){
+
+const email=emailInput.value.trim();
+
+if(!email){
+alert("Please enter email first.");
+return;
+}
+
+fetch("/send-otp/",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/x-www-form-urlencoded",
+"X-CSRFToken":getCSRFToken()
+},
+
+body:"email="+encodeURIComponent(email)
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+if(data.status==="success"){
+
+otpSection.style.display="block";
+otpMessage.innerHTML="Verification code sent to email.";
+otpMessage.style.color="lightgreen";
+
+emailInput.readOnly=true;
+
+}
+
+else{
+
+otpMessage.innerHTML=data.message;
+otpMessage.style.color="red";
+
+}
+
+});
+
+}
+
+
+function verifyOTP(){
+
+let otp="";
+
+document.querySelectorAll(".otp-input").forEach(i=>{
+otp+=i.value;
+});
+
+const email=emailInput.value.trim();
+
+if(!otp){
+
+otpMessage.innerHTML="Enter verification code.";
+otpMessage.style.color="red";
+return;
+
+}
+
+fetch("/verify-otp/",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/x-www-form-urlencoded",
+"X-CSRFToken":getCSRFToken()
+},
+
+body:"email="+encodeURIComponent(email)+"&otp="+encodeURIComponent(otp)
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+if(data.status==="success"){
+
+otpMessage.innerHTML="✔ Email verified";
+otpMessage.style.color="lightgreen";
+registerBtn.disabled=false;
+
+}
+
+else{
+
+otpMessage.innerHTML=data.message || "Invalid code.";
+otpMessage.style.color="red";
+
+}
+
+});
+
+}
+
+
+/* PARTICLES */
+
+particlesJS("particles-js",{
+
+particles:{
+number:{value:80},
+size:{value:3},
+move:{speed:2},
+line_linked:{enable:true}
+}
+
+});
+
+
+</script>
+
+{% endblock %}

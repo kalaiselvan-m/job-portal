@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4 profile-page">
+
+<!-- PROFILE HEADER -->
+
+<div class="profile-header d-flex justify-content-between align-items-center mb-4">
+
+<div>
+<h3 class="text-white fw-bold">
+<i class="bi bi-person-circle"></i> My Profile
+</h3>
+<p class="text-light small mb-0">
+Manage your account and improve your ATS score
+</p>
+</div>
+
+<a href="{% url 'seeker_dashboard' %}" class="btn btn-back-dashboard">
+<i class="bi bi-arrow-left"></i> Back to Jobs
+</a>
+
+</div>
+
+
+<!-- PROFILE CARD -->
+
+<div class="card profile-card shadow-lg p-4">
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- USERNAME -->
+
+<label class="fw-bold">Username</label>
+
+<div class="input-group mb-3">
+
+<input
+type="text"
+id="usernameField"
+name="username"
+class="form-control profile-input"
+value="{{ user.username }}"
+readonly>
+
+<button
+type="button"
+class="btn btn-warning"
+onclick="sendOTP()">
+
+<i class="bi bi-shield-check"></i>
+Verify to Edit
+
+</button>
+
+</div>
+
+
+<!-- OTP BOX -->
+
+<div id="otpBox" class="mb-3" style="display:none;">
+
+<label>Enter OTP</label>
+
+<div class="input-group">
+
+<input
+type="text"
+id="otpInput"
+class="form-control"
+placeholder="Enter OTP">
+
+<button
+type="button"
+class="btn btn-success"
+onclick="verifyOTP()">
+
+Verify
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- EMAIL -->
+
+<label class="fw-bold">Email</label>
+
+<input
+type="email"
+class="form-control mb-3"
+value="{{ user.email }}"
+readonly>
+
+
+<!-- RESUME -->
+
+<label class="fw-bold">Resume</label>
+
+{% if user.resume %}
+
+<div class="mb-2">
+
+<a href="{{ user.resume.url }}" target="_blank" class="btn btn-primary btn-sm">
+<i class="bi bi-file-earmark"></i> View Resume
+</a>
+
+</div>
+
+{% endif %}
+
+<input type="file" name="resume" class="form-control mb-3">
+
+
+<!-- ATS SCORE -->
+
+{% if resume_score %}
+
+<div class="text-center mt-4">
+
+<h5>Resume ATS Score</h5>
+
+<div style="width:220px;margin:auto;height:220px;">
+<canvas id="atsChart"></canvas>
+</div>
+
+<p class="fw-bold mt-2">
+{{ resume_score }}% Match
+</p>
+
+{% if rating %}
+
+{% if rating == "strong" %}
+<span class="badge bg-success">Strong Match</span>
+
+{% elif rating == "moderate" %}
+<span class="badge bg-warning text-dark">Moderate Match</span>
+
+{% else %}
+<span class="badge bg-danger">Weak Match</span>
+
+{% endif %}
+
+{% endif %}
+
+</div>
+
+{% endif %}
+
+
+
+<!-- SKILL ANALYSIS -->
+
+{% if matched_skills or missing_skills %}
+
+<hr class="mt-4">
+
+<div class="row mt-4">
+
+<div class="col-md-6">
+
+<h5 class="text-success">
+<i class="bi bi-check-circle"></i> Matched Skills
+</h5>
+
+{% for skill in matched_skills %}
+<span class="badge bg-success m-1">
+✔ {{ skill }}
+</span>
+{% empty %}
+<p class="text-muted">No strong skill matches found.</p>
+{% endfor %}
+
+</div>
+
+
+<div class="col-md-6">
+
+<h5 class="text-danger">
+<i class="bi bi-x-circle"></i> Missing Skills
+</h5>
+
+{% for skill in missing_skills %}
+<span class="badge bg-danger m-1">
+✖ {{ skill }}
+</span>
+{% empty %}
+<p class="text-muted">Your resume covers all required skills.</p>
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endif %}
+
+
+<button class="btn btn-success w-100 mt-4">
+<i class="bi bi-save"></i>
+Update Profile
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+
+function getCookie(name) {
+
+let cookieValue = null;
+
+if (document.cookie && document.cookie !== '') {
+
+const cookies = document.cookie.split(';');
+
+for (let i = 0; i < cookies.length; i++) {
+
+const cookie = cookies[i].trim();
+
+if (cookie.substring(0, name.length + 1) === (name + '=')) {
+
+cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+break;
+
+}
+
+}
+
+}
+
+return cookieValue;
+
+}
+
+
+// SEND OTP
+
+function sendOTP(){
+
+fetch("/send-otp/", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken": getCookie("csrftoken")
+},
+
+body: JSON.stringify({
+email:"{{ user.email }}"
+})
+
+})
+
+.then(response => response.json())
+
+.then(data => {
+
+if(data.status === "success"){
+
+alert("📧 OTP sent to your email");
+
+document.getElementById("otpBox").style.display="block";
+
+}else{
+
+alert(data.message);
+
+}
+
+});
+
+}
+
+
+// VERIFY OTP
+
+function verifyOTP(){
+
+let otp = document.getElementById("otpInput").value;
+
+fetch("/verify-otp/", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken": getCookie("csrftoken")
+},
+
+body: JSON.stringify({
+email:"{{ user.email }}",
+otp:otp
+})
+
+})
+
+.then(response => response.json())
+
+.then(data => {
+
+if(data.status === "success"){
+
+alert("✅ OTP Verified");
+
+document.getElementById("usernameField").removeAttribute("readonly");
+
+}else{
+
+alert("❌ Invalid OTP");
+
+}
+
+});
+
+}
+
+
+// ================= ATS CHART =================
+
+{% if resume_score %}
+
+const score = {{ resume_score }};
+
+let color = "#dc3545"; // red
+
+if(score >= 80){
+color = "#28a745"; // green
+}
+else if(score >= 60){
+color = "#ffc107"; // yellow
+}
+
+const ctx = document.getElementById('atsChart').getContext('2d');
+
+new Chart(ctx, {
+
+type: 'doughnut',
+
+data: {
+
+labels: ['Matched', 'Remaining'],
+
+datasets: [{
+
+data: [score, 100-score],
+
+backgroundColor: [
+color,
+'#e9ecef'
+],
+
+borderWidth: 0
+
+}]
+
+},
+
+options: {
+
+cutout: '75%',
+
+animation:{
+animateRotate:true,
+duration:2000
+},
+
+plugins:{
+legend:{
+display:false
+}
+},
+
+responsive:true,
+maintainAspectRatio:false
+
+}
+
+});
+
+{% endif %}
+
+</script>
+{% endblock %}

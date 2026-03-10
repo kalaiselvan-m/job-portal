@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="dashboard-header mb-4">
+
+<h2 class="fw-bold text-white">
+<i class="bi bi-speedometer2"></i> Employer Dashboard
+</h2>
+
+<p class="text-light">
+Manage applications and review ATS ranked candidates
+</p>
+
+</div>
+
+
+<!-- ================= SUMMARY CARDS ================= -->
+
+<div class="row g-4 mb-4">
+
+<div class="col-md-3">
+<div class="dashboard-card">
+
+<i class="bi bi-file-earmark-text dashboard-icon"></i>
+
+<h6>Total Applications</h6>
+
+<h3>{{ total_applications }}</h3>
+
+</div>
+</div>
+
+
+<div class="col-md-3">
+<div class="dashboard-card success">
+
+<i class="bi bi-check-circle dashboard-icon"></i>
+
+<h6>Shortlisted</h6>
+
+<h3>{{ shortlisted_count }}</h3>
+
+</div>
+</div>
+
+
+<div class="col-md-3">
+<div class="dashboard-card danger">
+
+<i class="bi bi-x-circle dashboard-icon"></i>
+
+<h6>Rejected</h6>
+
+<h3>{{ rejected_count }}</h3>
+
+</div>
+</div>
+
+
+<div class="col-md-3">
+<div class="dashboard-card primary">
+
+<i class="bi bi-bar-chart dashboard-icon"></i>
+
+<h6>Average ATS</h6>
+
+<h3>{{ avg_score }}%</h3>
+
+</div>
+</div>
+
+</div>
+
+
+<!-- ================= CHART ================= -->
+
+<div class="card dashboard-chart p-4 shadow mb-4 text-center">
+
+<h5 class="mb-4">Application Statistics</h5>
+
+<div style="max-width:380px;margin:auto;">
+
+<canvas id="statusChart"
+data-shortlisted="{{ shortlisted_count }}"
+data-rejected="{{ rejected_count }}">
+</canvas>
+
+</div>
+
+</div>
+
+
+<!-- ================= FILTER ================= -->
+
+<div class="card dashboard-filter p-3 shadow mb-4">
+
+<div class="row">
+
+<div class="col-md-6 mb-2">
+
+<input type="text"
+id="searchInput"
+class="form-control filter-input"
+placeholder="Search applicants..."
+onkeyup="filterBySearch()">
+
+</div>
+
+
+<div class="col-md-6 mb-2">
+
+<select id="scoreFilter"
+class="form-select filter-select"
+onchange="filterByScore()">
+
+<option value="all">All Scores</option>
+<option value="80">Above 80%</option>
+<option value="60">60% - 80%</option>
+<option value="low">Below 60%</option>
+
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= APPLICATION TABLE ================= -->
+
+<div class="card shadow p-3 dashboard-table">
+
+<table class="table table-hover align-middle">
+
+<thead class="table-dark">
+<tr>
+<th>Applicant</th>
+<th>Job</th>
+<th style="width:200px;">ATS Score</th>
+<th>Status</th>
+<th>Resume</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="applicationTable">
+
+{% for app in applications %}
+<tr class="table-row">
+
+<td>
+
+{{ app.applicant.username }}
+
+{% if app.reconsider_requested %}
+<span class="badge bg-warning text-dark ms-1">
+Reconsider
+</span>
+{% endif %}
+
+{% if app.is_override %}
+<span class="badge bg-success ms-1">
+Override
+</span>
+{% endif %}
+
+</td>
+
+<td>{{ app.job.title }}</td>
+
+
+<td>
+
+<div class="progress ats-progress">
+
+<div class="progress-bar
+
+{% if app.ats_score >= 80 %}
+bg-success
+{% elif app.ats_score >= 60 %}
+bg-warning
+{% else %}
+bg-danger
+{% endif %}"
+
+style="width: {{ app.ats_score }}%;"
+data-score="{{ app.ats_score }}">
+
+</div>
+
+</div>
+
+<small class="fw-bold">{{ app.ats_score }}%</small>
+
+</td>
+
+
+<td>
+
+{% if app.status == "Rejected" %}
+<span class="badge bg-danger">{{ app.status }}</span>
+
+{% elif app.status == "Shortlisted" %}
+<span class="badge bg-success">{{ app.status }}</span>
+
+{% elif app.status == "Under Review" %}
+<span class="badge bg-warning text-dark">{{ app.status }}</span>
+
+{% else %}
+<span class="badge bg-primary">{{ app.status }}</span>
+
+{% endif %}
+
+</td>
+
+
+<td>
+
+{% if app.applicant.resume %}
+
+<a href="{{ app.applicant.resume.url }}"
+target="_blank"
+class="btn btn-sm btn-secondary me-1">
+View
+</a>
+
+<a href="{{ app.applicant.resume.url }}"
+download
+class="btn btn-sm btn-outline-dark">
+Download
+</a>
+
+{% else %}
+
+<span class="text-muted">No Resume</span>
+
+{% endif %}
+
+</td>
+
+
+<td>
+
+<a href="{% url 'review_application' app.id %}"
+class="btn btn-sm btn-warning review-btn">
+
+<i class="bi bi-eye"></i>
+Review
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endblock %}

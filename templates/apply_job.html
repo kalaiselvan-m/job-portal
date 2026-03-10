@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* ================= PAGE BACKGROUND ================= */
+
+.apply-bg{
+background:linear-gradient(135deg,#4f46e5,#9333ea);
+padding:60px 0;
+min-height:80vh;
+}
+
+
+/* ================= JOB HEADER ================= */
+
+.job-header{
+color:white;
+margin-bottom:30px;
+}
+
+.job-header h2{
+font-weight:700;
+}
+
+
+/* ================= JOB CARD ================= */
+
+.job-detail-card{
+border-radius:20px;
+background:white;
+box-shadow:0 20px 50px rgba(0,0,0,0.15);
+transition:0.3s;
+}
+
+.job-detail-card:hover{
+transform:translateY(-5px);
+}
+
+
+/* ================= SECTION ================= */
+
+.job-section{
+margin-bottom:25px;
+}
+
+
+/* ================= SKILLS ================= */
+
+.skill-badge{
+display:inline-block;
+background:#eef2ff;
+color:#4338ca;
+padding:6px 14px;
+border-radius:20px;
+margin:4px;
+font-size:13px;
+font-weight:500;
+}
+
+
+/* ================= ATS BAR ================= */
+
+.ats-bar{
+background:#eee;
+height:14px;
+border-radius:10px;
+overflow:hidden;
+}
+
+.ats-fill{
+height:100%;
+background:linear-gradient(90deg,#22c55e,#16a34a);
+color:white;
+text-align:center;
+font-size:11px;
+font-weight:600;
+line-height:14px;
+animation:loadATS 1.2s ease;
+}
+
+@keyframes loadATS{
+from{
+width:0%;
+}
+}
+
+
+/* ================= APPLY BUTTON ================= */
+
+.btn-apply-job{
+background:linear-gradient(135deg,#22c55e,#16a34a);
+border:none;
+color:white;
+font-weight:600;
+padding:12px;
+border-radius:30px;
+transition:0.3s;
+}
+
+.btn-apply-job:hover{
+transform:scale(1.03);
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+
+/* ================= BACK BUTTON ================= */
+
+.btn-back{
+background:#f1f5f9;
+border-radius:20px;
+padding:8px 18px;
+}
+
+</style>
+
+
+
+<div class="apply-bg">
+
+<div class="container">
+
+<!-- ================= JOB HEADER ================= -->
+
+<div class="job-header text-center">
+
+<h2>{{ job.title }}</h2>
+
+<p>
+Apply now and let our AI ATS evaluate your resume
+</p>
+
+</div>
+
+
+<!-- ================= JOB CARD ================= -->
+
+<div class="card job-detail-card p-4">
+
+
+<!-- JOB DESCRIPTION -->
+
+<div class="job-section">
+
+<h5>
+<i class="bi bi-file-text text-primary"></i>
+Job Description
+</h5>
+
+<p class="mt-2">
+{{ job.description }}
+</p>
+
+</div>
+
+
+<hr>
+
+
+<!-- REQUIRED SKILLS -->
+
+<div class="job-section">
+
+<h5>
+<i class="bi bi-tools text-success"></i>
+Required Skills
+</h5>
+
+<div class="mt-2">
+
+{% for skill in skills_list %}
+
+<span class="skill-badge">
+{{ skill }}
+</span>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+
+<hr>
+
+
+<!-- ATS SCORE -->
+
+<div class="job-section">
+
+<h5>
+<i class="bi bi-bar-chart-line text-warning"></i>
+Minimum ATS Score
+</h5>
+
+<div class="ats-bar mt-2">
+
+<div class="ats-fill"
+style="width:{{ job.minimum_ats_score }}%">
+
+{{ job.minimum_ats_score }}%
+
+</div>
+
+</div>
+
+<p class="text-muted mt-2 small">
+Your resume must match at least this score to pass the AI screening.
+</p>
+
+</div>
+
+
+<hr>
+
+
+<!-- APPLY BUTTON -->
+
+<form method="POST" class="mt-4">
+
+{% csrf_token %}
+
+<button type="submit" class="btn btn-apply-job w-100">
+
+<i class="bi bi-send"></i>
+Apply for this Job
+
+</button>
+
+</form>
+
+
+<div class="text-center mt-3">
+
+<a href="{% url 'seeker_dashboard' %}" class="btn btn-back">
+
+<i class="bi bi-arrow-left"></i>
+Back to Jobs
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

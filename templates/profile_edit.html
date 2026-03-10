@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="card shadow p-4">
+
+<h3 class="mb-4">My Profile</h3>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- USERNAME -->
+<div class="mb-3">
+
+<label class="form-label">Username</label>
+
+<div class="d-flex">
+
+<input
+type="text"
+name="username"
+value="{{ user.username }}"
+class="form-control"
+id="usernameField"
+readonly>
+
+<button
+type="button"
+class="btn btn-warning ms-2"
+onclick="sendOTP()">
+Verify to Edit
+</button>
+
+</div>
+
+</div>
+
+
+<!-- OTP INPUT -->
+<div id="otpBox" style="display:none" class="mb-3">
+
+<label class="form-label">Enter OTP</label>
+
+<div class="d-flex">
+
+<input
+type="text"
+id="otpInput"
+class="form-control"
+placeholder="Enter OTP">
+
+<button
+type="button"
+class="btn btn-success ms-2"
+onclick="verifyOTP()">
+Verify
+</button>
+
+</div>
+
+</div>
+
+
+<!-- EMAIL -->
+<div class="mb-3">
+
+<label>Email</label>
+
+<input
+type="email"
+class="form-control"
+value="{{ user.email }}"
+disabled>
+
+</div>
+
+
+<!-- RESUME -->
+<div class="mb-3">
+
+<label>Resume</label>
+
+{% if user.resume %}
+<br>
+<a href="{{ user.resume.url }}" class="btn btn-primary btn-sm mb-2">View Resume</a>
+{% endif %}
+
+<input
+type="file"
+name="resume"
+class="form-control">
+
+</div>
+
+
+<button class="btn btn-success w-100 mt-3">
+Update Profile
+</button>
+
+</form>
+
+</div>
+
+
+<script>
+
+// =============================
+// CSRF TOKEN
+// =============================
+
+function getCookie(name) {
+
+let cookieValue = null;
+
+if (document.cookie && document.cookie !== '') {
+
+const cookies = document.cookie.split(';');
+
+for (let i = 0; i < cookies.length; i++) {
+
+const cookie = cookies[i].trim();
+
+if (cookie.substring(0, name.length + 1) === (name + '=')) {
+
+cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+break;
+
+}
+
+}
+
+}
+
+return cookieValue;
+
+}
+
+const csrftoken = getCookie('csrftoken');
+
+
+// =============================
+// SEND OTP
+// =============================
+
+function sendOTP(){
+
+console.log("OTP button clicked");
+
+fetch("/send-otp/",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken": csrftoken
+},
+
+body:JSON.stringify({
+email:"{{ user.email }}"
+})
+
+})
+.then(response => response.json())
+
+.then(data => {
+
+console.log("Server response:", data);
+
+if(data.status === "success"){
+
+document.getElementById("otpBox").style.display = "block";
+
+Swal.fire(
+"OTP Sent",
+"Verification code sent to your email",
+"success"
+);
+
+}else{
+
+Swal.fire(
+"Error",
+data.message || "Unable to send OTP",
+"error"
+);
+
+}
+
+})
+
+.catch(error => {
+
+console.error("OTP Error:", error);
+
+Swal.fire(
+"Error",
+"Something went wrong while sending OTP",
+"error"
+);
+
+});
+
+}
+
+
+// =============================
+// VERIFY OTP
+// =============================
+
+function verifyOTP(){
+
+let otp = document.getElementById("otpInput").value;
+
+if(!otp){
+
+Swal.fire(
+"Enter OTP",
+"Please enter the OTP code",
+"warning"
+);
+
+return;
+}
+
+fetch("/verify-otp/",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken": csrftoken
+},
+
+body:JSON.stringify({
+email:"{{ user.email }}",
+otp:otp
+})
+
+})
+.then(response => response.json())
+
+.then(data => {
+
+console.log("Verify response:", data);
+
+if(data.status === "success"){
+
+document.getElementById("usernameField").removeAttribute("readonly");
+
+Swal.fire(
+"Verified",
+"Username editing enabled",
+"success"
+);
+
+}else{
+
+Swal.fire(
+"Invalid OTP",
+data.message || "Please try again",
+"error"
+);
+
+}
+
+})
+
+.catch(error => {
+
+console.error("Verify Error:", error);
+
+Swal.fire(
+"Error",
+"OTP verification failed",
+"error"
+);
+
+});
+
+}
+
+</script>
+
+{% endblock %}
